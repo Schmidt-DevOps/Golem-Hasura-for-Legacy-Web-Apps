@@ -1,7 +1,5 @@
-version: '3.8'
-
 services:
-  nginx:
+  dds-nginx:
     image: devilbox/nginx-mainline
     ports:
       - "8100:81"
@@ -15,17 +13,17 @@ services:
     networks:
       - app-network
     depends_on:
-      - php
+      - dds-php
   # https://github.com/devilbox/docker-php-fpm-5.4
-  php:
+  dds-php:
     image: devilbox/php-fpm:5.6-prod
     volumes:
       - ./web/php:/var/www/default/htdocs
     networks:
       - app-network
     depends_on:
-      - postgres
-  postgres:
+      - dds-postgres
+  dds-postgres:
     image: postgres:9-alpine
     ports:
       - "5432:5432"

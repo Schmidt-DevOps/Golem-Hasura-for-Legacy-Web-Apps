@@ -34,7 +34,7 @@ echo "<H1 ALIGN=CENTER>DVD Store</H1>\n";
 
 }
 //$connstr = "dbname=ds2 user=web password=web host=localhost port=5432";
-$connstr = "dbname=ds2 user=ds2 password=ds2 host=postgres port=5432";
+$connstr = "dbname=ds2 user=ds2 password=ds2 host=dds-postgres port=5432";
 ?>
 
 
