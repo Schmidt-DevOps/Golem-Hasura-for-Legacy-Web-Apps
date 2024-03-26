@@ -5,7 +5,7 @@ services:
       - "8100:81"
     volumes:
       - ./web/php:/var/www/default/htdocs
-      - ./conf/nginx.conf:/etc/httpd/vhost.d/default.conf
+      - ./conf/nginx-legacy.conf:/etc/httpd/vhost.d/default.conf
     environment:
       PHP_FPM_ENABLE: 1
       PHP_FPM_SERVER_ADDR: php
@@ -32,7 +32,7 @@ services:
       POSTGRES_USER: ds2
       POSTGRES_PASSWORD: ds2
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - dds-postgres_data:/var/lib/postgresql/data
       - ./initdb.d:/docker-entrypoint-initdb.d:ro
       - ./data_files:/data_files:ro
     networks:
@@ -44,4 +44,4 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_data:
+  dds-postgres_data:
