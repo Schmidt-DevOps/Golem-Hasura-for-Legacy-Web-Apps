@@ -1,18 +1,19 @@
 services:
-  dds2-nginx:
-    image: devilbox/nginx-mainline
+  dds2-postgres:
+    image: postgres:16-alpine
     ports:
-      - "8100:81"
-    volumes:
-      - ./conf/nginx-hasurafied.conf:/etc/httpd/vhost.d/default.conf
+      - "5432:5432"
     environment:
-      PHP_FPM_ENABLE: 1
-      PHP_FPM_SERVER_ADDR: php
-      PHP_FPM_SERVER_PORT: 9000
+      POSTGRES_DB: ds2
+      POSTGRES_USER: ds2
+      POSTGRES_PASSWORD: ds2
+    volumes:
+      - dds2-postgres_data:/var/lib/postgresql/data
+      - ./initdb.d:/docker-entrypoint-initdb.d:ro
+      - ./data_files:/data_files:ro
     networks:
       - app-network
-    depends_on:
-      - dds2-graphql-engine
+    command: ["postgres", "-c", "log_statement=all"]
   dds2-graphql-engine:
     image: hasura/graphql-engine:latest
     ports:
@@ -31,23 +32,23 @@ services:
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       ## uncomment next line to set an admin secret
       HASURA_GRAPHQL_ADMIN_SECRET: admin_secret_not_for_production
+      HASURA_GRAPHQL_NO_OF_RETRIES: 50
     networks:
       - app-network
-  dds2-postgres:
-    image: postgres:16-alpine
+  dds2-nginx:
+    image: devilbox/nginx-mainline
     ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_DB: ds2
-      POSTGRES_USER: ds2
-      POSTGRES_PASSWORD: ds2
+      - "8100:81"
     volumes:
-      - dds2-postgres_data:/var/lib/postgresql/data
-      - ./initdb.d:/docker-entrypoint-initdb.d:ro
-      - ./data_files:/data_files:ro
+      - ./conf/nginx-hasurafied.conf:/etc/httpd/vhost.d/default.conf
+    environment:
+      PHP_FPM_ENABLE: 1
+      PHP_FPM_SERVER_ADDR: php
+      PHP_FPM_SERVER_PORT: 9000
     networks:
       - app-network
-    command: ["postgres", "-c", "log_statement=all"]
+    depends_on:
+      - dds2-graphql-engine
 
 networks:
   app-network:
