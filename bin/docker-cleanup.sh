@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
-docker rm -f "$(docker ps -a -q -f name=dds-postgres)"
-docker volume rm "$(docker volume ls -q -f name=dds-postgres_data)"
+for i in dds-postgres dds2-postgres; do
+    CONTAINER_NAME="$(docker ps -a -q -f name=${i})"
+    if [[ -n $CONTAINER_NAME ]]; then
+        docker rm -f "${CONTAINER_NAME}"
+    fi
 
-docker rm -f "$(docker ps -a -q -f name=dds2-postgres)"
-docker volume rm "$(docker volume ls -q -f name=dds2-postgres_data)"
+    VOLUME_NAME="$(docker volume ls -q -f name=${i}_data)"
+    if [[ -n $VOLUME_NAME ]]; then
+        docker volume rm "${VOLUME_NAME}"
+    fi
+done
